@@ -34,6 +34,9 @@ Chain stuff along:
         alert('All done!');
     });
 
+## Limitations
+
+This is a very simple implementation. It is intended to be used to chain promises, resolve, and reject. It really isn't intended for any other use. It does what I need a promise to do, and no more...
 
 ## License
 None. Do whatever you want with this.
