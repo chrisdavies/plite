@@ -5,6 +5,7 @@ Tiny, light-weight JavaScript promises
 ## Stats
 
 size: ~370 bytes gzipped and minified
+
 perf: http://jsperf.com/plite 
       (pretty darn good compared to jQuery's deferred implementation) 
 
