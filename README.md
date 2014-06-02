@@ -44,16 +44,14 @@ Alite is an example usage of Plite. It's a basic ajax library that uses Plite pr
 
 Here's the basic Alite usage:
 
-    // Get takes the URL to be retrieved. (Delete
-    // works exactly the same way.)
+    // Get and delete take the URL to be retrieved or deleted.
     Alite.get('/api/foos').then(function (result) {
         alert('GOT: ' + JSON.stringify(result.data))
     });
 
 
-    // Put takes a url and the object that will
-    // be sent to the server as JSON. (Post works
-    // exactly the same way.
+    // Put and post take a url and the object that will
+    // be sent to the server as JSON.
     Alite.put('/api/foos/23', {
         name: 'Turd Furguson'
     }).then(function (result) { 
