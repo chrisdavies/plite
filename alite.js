@@ -6,7 +6,6 @@ var Alite = (function() {
             req.responseText[0] == '[';
 
         return {
-            status: req.status,
             request: req,
             data: isJson ? JSON.parse(req.responseText) : req.responseText
         };
