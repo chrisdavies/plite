@@ -37,8 +37,42 @@ Chain stuff along:
     });
 
 ## Limitations
-
 This is a very simple implementation. It is intended to be used to chain promises, resolve, and reject. It really isn't intended for any other use. It does what I need a promise to do, and no more...
+
+## Alite
+Alite is an example usage of Plite. It's a basic ajax library that uses Plite promises.
+
+Here's the basic Alite usage:
+
+    // Get takes the URL to be retrieved. (Delete
+    // works exactly the same way.)
+    Alite.get('/api/foos').then(function (result) {
+        alert('GOT: ' + JSON.stringify(result.data))
+    });
+
+
+    // Put takes a url and the object that will
+    // be sent to the server as JSON. (Post works
+    // exactly the same way.
+    Alite.put('/api/foos/23', {
+        name: 'Turd Furguson'
+    }).then(function (result) { 
+        // Do stuff
+    }).catch(function (result) {
+        handleErrorResponse(result.data);
+    });
+
+There are four methods: get, put, post, and delete. They return a promise, and their callbacks receive an object that looks like this:
+
+    {
+       // The raw request/response object
+       request: { status: ... },
+       
+       // The response data, parsed as JSON, if it was a 
+       // JSON response, otherwise this is just the raw
+       // response string (text, html, or whatever).
+       data: { ... }
+    }
 
 ## License
 None. Do whatever you want with this.
