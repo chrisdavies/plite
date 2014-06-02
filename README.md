@@ -10,6 +10,8 @@ perf: http://jsperf.com/plite
       (pretty darn good compared to jQuery's deferred implementation) 
 
 ## Usage
+Include plite.js
+
 Create a promise:
 
     var p = Plite();
