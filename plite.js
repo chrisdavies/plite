@@ -12,17 +12,21 @@ function Plite() {
 
         thenFn = function (o, then) {
             prevThen(o, function (res) {
-                result = fn(res);
+                try {
+                    result = fn(res);
 
-                if (!then) {
-                    completed = true;
-                    finallyFn(result);
-                } else if (result.then) {
-                    result.then(then).catch(function (err) {
-                        reject(err);
-                    });
-                } else {
-                    then(result);
+                    if (!then) {
+                        completed = true;
+                        finallyFn(result);
+                    } else if (result.then) {
+                        result.then(then).catch(function (err) {
+                            reject(err);
+                        });
+                    } else {
+                        then(result);
+                    }
+                } catch (err) {
+                    reject(err);
                 }
             });
         };

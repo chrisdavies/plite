@@ -148,3 +148,15 @@ test('reject finally last', function () {
         ok(msg == 'ecool');
     })
 });
+
+test('catch is triggered when then excepts', function () {
+    var p = new Plite();
+
+    p.then(function () {
+        throw 'ruh roh!';
+    }).catch(function (err) {
+        ok(err == 'ruh roh!');
+    })
+
+    p.resolve('mkay');
+});
