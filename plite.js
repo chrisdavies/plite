@@ -1,71 +1,80 @@
-function Plite(arg) {
+function Plite() {
 
-    // 'catch' or 'then', depending on whether the promise was resolved or rejected
-    var result, 
+        var result,
+            completed,
+            thenFn,
+            catchFn = function (err) { console.log(err); },
+            finallyFn = function () { },
+            me;
 
-        // The next promise in the chain
-        next, 
+        function then(fn) {
+            var prevThen = thenFn || function (o, fn) { fn && fn(o); };
 
-        // Default handler methods, just pass on through to the next promise in the chain
-        handler = {
-            then: function (arg) { return next && next.resolve(arg); },
-            'catch': function (arg) { return next && next.reject(arg); },
-            done: undefined
-        };
+            thenFn = function (o, then) {
+                prevThen(o, function (res) {
+                    result = fn(res);
 
-    // Run whenever this promise is complete
-    function complete () {
-        if (result) {
-            handler[result](arg);
-            handler.done && handler.done(arg);
-        }
-    }
-
-    // Creates a function for registering a 'then', 'catch', or 'done' handler
-    function handlerRegistrationFn(type) {
-        return function (f) {
-            handler[type] = function (argument) {
-                var nextArg = f(arg);
-                if (nextArg && nextArg.then) {
-                    nextArg.then(function (arg) {
-                        next.resolve(arg);
-                    }).catch(function (arg) {
-                        next.reject(arg);
-                    });
-                } else {
-                    next.resolve(nextArg);
-                }
+                    if (!then) {
+                        completed = true;
+                        finallyFn(result);
+                    } else if (result.then) {
+                        result.then(then).catch(function (err) {
+                            reject(err);
+                        });
+                    } else {
+                        then(result);
+                    }
+                });
             };
 
-            next = Plite();
-            complete();
-            return next;
+            completed && resolve(result);
+
+            return me;
+        }
+
+        function _catch (fn) {
+            catchFn = fn;
+            return me;
+        }
+
+        function _finally (fn) {
+            finallyFn = fn;
+            completed && fn(result);
+            return me;
+        }
+        
+        function resolve (obj) {
+            result = obj;
+
+            if (!(completed = (thenFn === undefined))) {
+                var fn = thenFn;
+                thenFn = undefined;
+                fn(obj);
+            }
+        }
+
+        function reject (err) {
+            result = err;
+            then = function () { return this; };
+            catchFn(err);
+            finallyFn(err);
+
+            function callInstantly(fn) {
+                fn(this.result);
+                return this;
+            }
+            
+            me.catch = me.finally = function (fn) {
+                fn(result);
+                return this;
+            }
+        }
+
+        return me = {
+            'catch': _catch,
+            'finally': _finally,
+            then: then,
+            reject: reject,
+            resolve: resolve
         }
     }
-
-    // Creates a function for resolving or rejecting this promise
-    function createResolveFunction(resolveResult) {
-        return function (argument) {
-            result = resolveResult;
-            arg = argument;
-            complete();
-        }
-    }
-
-    // The actual promise object used for registering, and resolving/rejecting.
-    function Inst() { }
-
-    Inst.prototype = {
-        then: handlerRegistrationFn('then'),
-
-        'catch': handlerRegistrationFn('catch'),
-
-        done: handlerRegistrationFn('done'),
-
-        resolve: createResolveFunction('then'),
-
-        reject: createResolveFunction('catch')
-    }
-
-    return new Inst();
-}
