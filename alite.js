@@ -12,7 +12,7 @@ var Alite = (function() {
     }
 
     function ajax(httpMethod, url, params) {
-        var promise = Plite();
+        var promise = new Plite();
 
         var req = new XMLHttpRequest();
 
