@@ -4,17 +4,18 @@ Tiny, light-weight JavaScript promises
 
 ## Stats
 
-size: ~370 bytes gzipped and minified
+size: 383 bytes gzipped and minified
+      (pretty darn small compared to the others)
 
-perf: http://jsperf.com/plite 
-      (pretty darn good compared to jQuery's deferred implementation) 
+perf: http://jsperf.com/plite/7
+      (pretty darn good compared to the others) 
 
 ## Usage
 Include plite.js
 
 Create a promise:
 
-    var p = Plite();
+    var p = new Plite();
 
 Resolve a promise:
 
@@ -32,7 +33,7 @@ Chain stuff along:
         alert('GOOD: ' + msg);
     }).catch(function (err) {
         alert('ERR: ' + err);
-    }).done(function () {
+    }).finally(function () {
         alert('All done!');
     });
 
