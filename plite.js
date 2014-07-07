@@ -18,7 +18,7 @@ function Plite() {
                     if (!then) {
                         completed = true;
                         finallyFn(result);
-                    } else if (result.then) {
+                    } else if (result && result.then) {
                         result.then(then).catch(function (err) {
                             reject(err);
                         });

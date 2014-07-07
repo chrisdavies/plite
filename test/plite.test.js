@@ -160,3 +160,14 @@ test('catch is triggered when then excepts', function () {
 
     p.resolve('mkay');
 });
+
+test('then does not require return value', function () {
+    var p = new Plite();
+
+    p.then(function () {
+    }).then(function () {
+        ok('The second then was called');
+    })
+
+    p.resolve('mkay');
+});
