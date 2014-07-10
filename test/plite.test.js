@@ -171,17 +171,3 @@ test('then does not require return value', function () {
 
     p.resolve('mkay');
 });
-
-test('catch cannot be overridden', function () {
-    var p = new Plite();
-
-    p.catch(function () {
-        ok(true);
-    });
-
-    p.catch(function () {
-        ok(false);
-    });
-
-    p.reject('nope');
-})

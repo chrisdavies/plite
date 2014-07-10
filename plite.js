@@ -3,7 +3,6 @@ function Plite() {
     var result,
         completed,
         thenFn,
-        hasCatch = false,
         catchFn = function (err) { console.log(err); return err; },
         finallyFn = function () { },
         me;
@@ -38,8 +37,7 @@ function Plite() {
     }
 
     function _catch (fn) {
-        !hasCatch && (catchFn = fn);
-        hasCatch = true;
+        catchFn = fn;
         return me;
     }
 
