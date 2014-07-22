@@ -33,7 +33,7 @@ function Plite() {
 
         completed && resolve(result);
 
-        return me;
+        return result && result.then ? result : me;
     }
 
     function _catch (fn) {

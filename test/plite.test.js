@@ -171,3 +171,43 @@ test('then does not require return value', function () {
 
     p.resolve('mkay');
 });
+
+test('completed chain', function () {
+    var p = new Plite(),
+        p2 = new Plite(),
+        finallyRan = false;
+    p.resolve('done');
+
+    p.then(function () {
+        return p2;
+    }).then(function (r) {
+        ok(finallyRan == false);
+        ok(r == 'done2');
+    }).finally(function () {
+        finallyRan = true;
+    });
+
+    p2.resolve('done2');
+    ok(finallyRan == true);
+})
+
+test('error chain', function () {
+    var p = new Plite(),
+        p2 = new Plite(),
+        finallyRan = false;
+    p.resolve('done');
+
+    p.then(function () {
+        return p2;
+    }).then(function (r) {
+        ok(false, 'Should not have gotten to then');
+    }).catch(function (e) {
+        ok(finallyRan == false);
+        ok(e == 'errorz');
+    }).finally(function () {
+        finallyRan = true;
+    });
+
+    p2.reject('errorz');
+    ok(finallyRan == true);
+})
