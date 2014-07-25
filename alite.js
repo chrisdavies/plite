@@ -48,6 +48,10 @@ var Alite = (function() {
 
         put: function (url, data) {
             return ajax('PUT', url, data);
+        },
+        
+        patch: function (url, data) {
+            return ajax('PATCH', url, data);
         }
     };
 })();
