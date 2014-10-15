@@ -49,6 +49,26 @@ asyncTest('resolve multi-promise', function () {
     p1.resolve('chris');
 })
 
+test('finally with no then on err', function () {
+    var p = new Plite();
+
+    p.finally(function () {
+        ok(true);
+    });
+
+    p.reject('Doh!');
+});
+
+test('finally with no then on resolve', function () {
+    var p = new Plite();
+
+    p.finally(function () {
+        ok(true);
+    });
+
+    p.resolve('Great!');
+});
+
 test('resolve finally', function () {
     var p = new Plite();
 

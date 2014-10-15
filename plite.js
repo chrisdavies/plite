@@ -54,6 +54,8 @@ function Plite() {
             var fn = thenFn;
             thenFn = undefined;
             fn(obj);
+        } else {
+            finallyFn(result);
         }
     }
 
