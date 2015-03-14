@@ -1,86 +1,100 @@
-function Plite() {
+function Plite(resolver) {
+  var resultGetter;
 
-    var result,
-        completed,
-        thenFn,
-        catchFn = function (err) { console.log(err); return err; },
-        finallyFn = function () { },
-        me;
+  // Build a chain of callbacks to be run when the promise
+  // resolves. Clear the chain once the promise has resolved
+  var emptyFn = function () {},
+      chain = emptyFn;
 
-    function then(fn) {
-        var prevThen = thenFn || function (o, fn) { fn && fn(o); };
-
-        thenFn = function (o, then) {
-            prevThen(o, function (res) {
-                try {
-                    result = fn(res);
-
-                    if (!then) {
-                        completed = true;
-                        finallyFn(result);
-                    } else if (result && result.then) {
-                        result.then(then).catch(function (err) {
-                            reject(err);
-                        });
-                    } else {
-                        then(result);
-                    }
-                } catch (err) {
-                    reject(err);
-                }
-            });
-        };
-
-        completed && resolve(result);
-
-        return result && result.then ? result : me;
+  function processResult(result, callback, reject) {
+    if (result && result.then) {
+      result.then(function (data) {
+        processResult(data, callback, reject);
+      }).catch(function (err) {
+        processResult(err, reject, reject);
+      });
+    } else {
+      callback(result);
     }
+  }
 
-    function _catch (fn) {
-        catchFn = fn;
-        return me;
+  function setError(err) {
+    resultGetter = function (successCallback, failCallback) {
+      try {
+        failCallback(err);
+      } catch (ex) {
+        failCallback(ex);
+      }
+    };
+
+    chain();
+    chain = undefined;
+  }
+
+  function setSuccess(data) {
+    resultGetter = function (successCallback, failCallback) {
+      try {
+        successCallback(data);
+      } catch (ex) {
+        failCallback(ex);
+      }
+    };
+
+    chain();
+    chain = undefined;
+  }
+
+  function buildChain(onsuccess, onfailure) {
+    var prevChain = chain;
+    chain = function () {
+      prevChain();
+      resultGetter(onsuccess, onfailure);
+    };
+  }
+
+  var self = {
+    then: function (callback) {
+      var resolveCallback = resultGetter || buildChain;
+
+      return Plite(function (resolve, reject) {
+        resolveCallback(function (data) {
+          resolve(callback(data));
+        }, reject);
+      });
+    },
+
+    catch: function (callback) {
+      var resolveCallback = resultGetter || buildChain;
+
+      return Plite(function (resolve, reject) {
+        resolveCallback(resolve, function (err) {
+          reject(callback(err));
+        });
+      });
+    },
+
+    resolve: function (result) {
+      processResult(result, setSuccess, setError);
+    },
+
+    reject: function (err) {
+      processResult(err, setError, setError);
     }
+  };
 
-    function _finally (fn) {
-        finallyFn = fn;
-        completed && fn(result);
-        return me;
-    }
-        
-    function resolve (obj) {
-        result = obj;
+  resolver && resolver(self.resolve, self.reject);
 
-        if (!(completed = (thenFn === undefined))) {
-            var fn = thenFn;
-            thenFn = undefined;
-            fn(obj);
-        } else {
-            finallyFn(result);
-        }
-    }
-
-    function reject (err) {
-        result = err;
-        then = function () { return this; };
-        result = catchFn(result);
-        finallyFn(result);
-
-        function callInstantly(fn) {
-            fn(result);
-            return this;
-        }
-            
-        me.catch = me.finally = function (fn) {
-            result = fn(result);
-            return this;
-        }
-    }
-
-    return me = {
-        'catch': _catch,
-        'finally': _finally,
-        then: then,
-        reject: reject,
-        resolve: resolve
-    }
+  return self;
 }
+
+Plite.resolve = function (result) {
+  return Plite(function (resolve) {
+    resolve(result);
+  });
+};
+
+Plite.reject = function (err) {
+  return Plite(function (resolve, reject) {
+    reject(err);
+  });
+};
