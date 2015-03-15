@@ -1,78 +1,99 @@
 # plite
 
-Tiny, light-weight JavaScript promises
+Tiny, fast, light-weight JavaScript promises.
 
 ## Stats
 
-size: 383 bytes gzipped and minified
-      (pretty darn small compared to the others)
+size: roughly 600 bytes gzipped and minified
 
-perf: http://jsperf.com/plite/7
-      (pretty darn good compared to the others) 
+perf: http://jsperf.com/plite/14
 
 ## Usage
-Include plite.js
 
-Create a promise:
+Include `plite.min.js`
 
-    var p = new Plite();
+Plite should work as a shim for ES6 promises, if you do this:
 
-Resolve a promise:
+    !this.Promise && (this.Promise = Plite);
 
-    p.resolve('Hey, that was successful!');
+Create a resolved promise:
 
-Reject a promise:
+    Plite.resolve(data);
 
-    p.reject('Utter failure.');
+Create a rejected promise:
 
-Chain stuff along:
+    Plite.reject(err);
+
+Resolve a promise after a bit:
+
+    Plite(function (resolve) {
+      setTimeout(function () {
+        resolve('all done!');
+      }, 100);
+    });
+
+Reject a promise after a bit:
+
+    Plite(function (resolve, reject) {
+      setTimeout(function () {
+        reject('Ruh roh!');
+      }, 100);
+    });
+
+Promises supports chaining:
+
+    var p = Plite.resolve('Hurrah!');
 
     p.then(function (msg) {
-        return msg + ' on ' + new Date().toString();
+      return msg + ' on ' + new Date().toString();
     }).then(function (msg) {
-        alert('GOOD: ' + msg);
+      alert('GOOD: ' + msg);
     }).catch(function (err) {
-        alert('ERR: ' + err);
-    }).finally(function () {
-        alert('All done!');
+      alert('ERR: ' + err);
     });
 
-## Limitations
-This is a very simple implementation. It is intended to be used to chain promises, resolve, and reject. It really isn't intended for any other use. It does what I need a promise to do, and no more...
+## Race and All
 
-## Alite
-Alite is an example usage of Plite. It's a basic ajax library that uses Plite promises.
+All works as documented in [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all).
 
-Here's the basic Alite usage:
+So does [race](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race).
 
-    // Get and delete take the URL to be retrieved or deleted.
-    Alite.get('/api/foos').then(function (result) {
-        alert('GOT: ' + JSON.stringify(result.data))
+With the caveat that the iterable argument is treated as an array. So:
+
+    Plite.all([promise1, promise2]).then(function (data) {
+      // data is the array of values that the promises resolved to...
+    }).catch(function (err) {
+      // err is the error of to the first failed promise in the array
     });
 
 
-    // Put and post take a url and the object that will
-    // be sent to the server as JSON.
-    Alite.put('/api/foos/23', {
-        name: 'Turd Furguson'
-    }).then(function (result) { 
-        // Do stuff
-    }).catch(function (result) {
-        handleErrorResponse(result.data);
-    });
+## Minification
 
-There are four methods: get, put, post, and delete. They return a promise, and their callbacks receive an object that looks like this:
+Minified using:
 
-    {
-       // The raw request/response object
-       request: { status: ... },
-       
-       // The response data, parsed as JSON, if it was a 
-       // JSON response, otherwise this is just the raw
-       // response string (text, html, or whatever).
-       data: { ... }
-    }
+    uglifyjs plite.js --source-map plite.min.js.map -m -c -o plite.min.js
 
-## License
-None. Do whatever you want with this.
+## License MIT
 
+Copyright (c) 2015 Chris Davies
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
