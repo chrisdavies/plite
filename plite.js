@@ -1,10 +1,7 @@
 function Plite(resolver) {
-  var resultGetter;
-
-  // Build a chain of callbacks to be run when the promise
-  // resolves. Clear the chain once the promise has resolved
   var emptyFn = function () {},
-      chain = emptyFn;
+      chain = emptyFn,
+      resultGetter;
 
   function processResult(result, callback, reject) {
     if (result && result.then) {
@@ -18,10 +15,10 @@ function Plite(resolver) {
     }
   }
 
-  function setError(err) {
+  function setResult(callbackRunner) {
     resultGetter = function (successCallback, failCallback) {
       try {
-        failCallback(err);
+        callbackRunner(successCallback, failCallback);
       } catch (ex) {
         failCallback(ex);
       }
@@ -31,17 +28,16 @@ function Plite(resolver) {
     chain = undefined;
   }
 
-  function setSuccess(data) {
-    resultGetter = function (successCallback, failCallback) {
-      try {
-        successCallback(data);
-      } catch (ex) {
-        failCallback(ex);
-      }
-    };
+  function setError(err) {
+    setResult(function (success, fail) {
+      fail(err);
+    });
+  }
 
-    chain();
-    chain = undefined;
+  function setSuccess(data) {
+    setResult(function (success) {
+      success(data);
+    });
   }
 
   function buildChain(onsuccess, onfailure) {
@@ -74,11 +70,11 @@ function Plite(resolver) {
     },
 
     resolve: function (result) {
-      processResult(result, setSuccess, setError);
+      !resultGetter && processResult(result, setSuccess, setError);
     },
 
     reject: function (err) {
-      processResult(err, setError, setError);
+      !resultGetter && processResult(err, setError, setError);
     }
   };
 
@@ -96,5 +92,47 @@ Plite.resolve = function (result) {
 Plite.reject = function (err) {
   return Plite(function (resolve, reject) {
     reject(err);
+  });
+};
+
+Plite.race = function (promises) {
+  promises = promises || [];
+  return Plite(function (resolve, reject) {
+    var len = promises.length;
+    if (!len) return resolve();
+
+    for (var i = 0; i < len; ++i) {
+      var p = promises[i];
+      p && p.then && p.then(resolve).catch(reject);
+    }
+  });
+};
+
+Plite.all = function (promises) {
+  promises = promises || [];
+  return Plite(function (resolve, reject) {
+    var len = promises.length,
+        count = len;
+
+    if (!len) return resolve();
+
+    function decrement() {
+      --count <= 0 && resolve(promises);
+    }
+
+    function waitFor(p, i) {
+      if (p && p.then) {
+        p.then(function (result) {
+          promises[i] = result;
+          decrement();
+        }).catch(reject);
+      } else {
+        decrement();
+      }
+    }
+
+    for (var i = 0; i < len; ++i) {
+      waitFor(promises[i], i);
+    }
   });
 };

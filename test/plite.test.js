@@ -1,3 +1,12 @@
+// TODO:
+// Test chaining off original promise
+// Test chaining off subsequent promise
+// Throw exception in .then
+// Throw exception in .catch
+// Return promise from .then, which returns a promise from its .then, etc
+// Return promise from .catch
+// Throw in then with delayed resolve
+
 ﻿asyncTest('resolve last', function () {
   var p = new Plite(function (resolve) {
     setTimeout(function () {
@@ -113,4 +122,78 @@ asyncTest('error chain', function () {
     start();
   });
 
+});
+
+test('all without promises', function () {
+  Plite.all([1, 2]).then(function (arr) {
+    ok(arr[0] === 1);
+    ok(arr[1] === 2);
+  });
+});
+
+test('all empty', function () {
+  Plite.all().then(function (arr) {
+    ok(arr === undefined);
+  });
+});
+
+test('all mixed', function () {
+  Plite.all([Plite.resolve('hoi'), 2]).then(function (arr) {
+    ok(arr[0], 'hoi');
+    ok(arr[1], 2);
+  });
+});
+
+asyncTest('all with promises', function () {
+  var p2 = Plite(function (resolve) {
+    setTimeout(function () { resolve('two'); })
+  });
+
+  Plite.all([Plite.resolve('hoi'), p2]).then(function (arr) {
+    ok(arr[0], 'hoi');
+    ok(arr[1], 'two');
+    start();
+  });
+});
+
+test('race empty', function () {
+  Plite.race().then(function () {
+    ok(true);
+  });
+});
+
+asyncTest('race resolve times', function () {
+  var count = 0;
+  var p1 = Plite(function (resolve) {
+    setTimeout(resolve, 100);
+  });
+  var p2 = Plite(function (resolve) {
+    setTimeout(function () {
+      resolve('uno');
+    }, 10);
+  });
+
+  Plite.race([p1, p2]).then(function (data) {
+    ok(++count === 1, 'Count = 1');
+    ok(data === 'uno', 'Uno');
+    start();
+  });
+});
+
+asyncTest('race reject times', function () {
+  var count = 0;
+  var p1 = Plite(function (resolve, reject) {
+    setTimeout(function () {
+      reject('doh!');
+    }, 10);
+  });
+  var p2 = Plite(function (resolve) {
+    setTimeout(resolve, 100);
+  });
+
+  Plite.race([p1, p2]).catch(function (data) {
+    ok(++count === 1, 'Count = 1');
+    ok(data === 'doh!', 'Doh');
+    start();
+  });
 });
