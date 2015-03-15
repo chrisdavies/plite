@@ -136,3 +136,7 @@ Plite.all = function (promises) {
     }
   });
 };
+
+if (typeof module === 'object' && typeof define !== 'function') {
+  module.exports = Plite;
+}
