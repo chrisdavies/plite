@@ -1,7 +1,7 @@
 {
   "name": "plite",
   "main": "plite.js",
-  "version": "0.0.1",
+  "version": "0.0.21",
   "homepage": "https://github.com/chrisdavies/plite",
   "authors": [
     "Chris Davies <ferociousturtle@gmail.com>"

@@ -1,6 +1,6 @@
 {
   "name": "plite",
-  "version": "0.0.1",
+  "version": "0.0.21",
   "description": "Tiny, fast, light-weight JavaScript promises.",
   "main": "plite.js",
   "directories": {},
