@@ -12,6 +12,14 @@ perf: http://jsperf.com/plite/14
 
 Include `plite.min.js`
 
+Or install using NPM:
+
+    npm install plite
+
+Or install using Bower:
+
+    bower install plite
+
 Plite should work as a shim for ES6 promises, if you do this:
 
     !this.Promise && (this.Promise = Plite);
