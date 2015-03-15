@@ -1,0 +1,22 @@
+{
+  "name": "plite",
+  "main": "plite.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/chrisdavies/plite",
+  "authors": [
+    "Chris Davies <ferociousturtle@gmail.com>"
+  ],
+  "description": "Tiny, fast, light-weight JavaScript promises.",
+  "keywords": [
+    "promise", "deferred", "future"
+  ],
+  "license": "MIT",
+  "ignore": [
+    ".gitignore",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "README.md"
+  ]
+}
