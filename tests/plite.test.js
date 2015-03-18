@@ -77,12 +77,37 @@ asyncTest('reject last', function () {
   });
 });
 
+asyncTest('reject last without catch', function () {
+  var p = Plite(function (resolve, reject) {
+    setTimeout(function () {
+      reject('doh');
+    });
+  });
+
+  p.then(function (result) {
+    ok(false, 'Should not have gotten to then');
+  }, function (err) {
+    ok(err == 'doh', 'Err should have been doh');
+    start();
+  });
+});
+
 test('reject first', function () {
   var p = Plite.reject('doh');
 
   p.then(function (result) {
     ok(false, 'Should not have gotten to then');
   }).catch(function (err) {
+    ok(err == 'doh');
+  });
+});
+
+test('reject first without catch', function () {
+  var p = Plite.reject('doh');
+
+  p.then(function (result) {
+    ok(false, 'Should not have gotten to then');
+  }, function (err) {
     ok(err == 'doh');
   });
 });
@@ -119,6 +144,14 @@ asyncTest('error chain', function () {
     ok(false, 'Should not have gotten to then');
   }).catch(function (e) {
     ok(e == 'errorz', 'errorz expected');
+    return 'caught';
+  }).then(function (result) {
+    ok(result === 'caught');
+    throw 'dern';
+  }).then(function () {
+    ok(false, 'Should not have gotten to last then');
+  }, function (e) {
+    ok(e === 'dern');
     start();
   });
 

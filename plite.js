@@ -1,9 +1,11 @@
 function Plite(resolver) {
-  var emptyFn = function () {},
+  var emptyFn = function (data) { return data; },
       chain = emptyFn,
       resultGetter;
 
   function processResult(result, callback, reject) {
+    if (resultGetter) return;
+    
     if (result && result.then) {
       result.then(function (data) {
         processResult(data, callback, reject);
@@ -49,32 +51,28 @@ function Plite(resolver) {
   }
 
   var self = {
-    then: function (callback) {
+    then: function (success, fail) {
       var resolveCallback = resultGetter || buildChain;
 
       return Plite(function (resolve, reject) {
         resolveCallback(function (data) {
-          resolve(callback(data));
-        }, reject);
+          resolve(success(data));
+        }, fail ? function (err) {
+          resolve(fail(err));
+        } : reject);
       });
     },
 
     catch: function (callback) {
-      var resolveCallback = resultGetter || buildChain;
-
-      return Plite(function (resolve, reject) {
-        resolveCallback(resolve, function (err) {
-          reject(callback(err));
-        });
-      });
+      return self.then(emptyFn, callback);
     },
 
     resolve: function (result) {
-      !resultGetter && processResult(result, setSuccess, setError);
+      processResult(result, setSuccess, setError);
     },
 
     reject: function (err) {
-      !resultGetter && processResult(err, setError, setError);
+      processResult(err, setError, setError);
     }
   };
 
