@@ -4,7 +4,10 @@
   "description": "Tiny, fast, light-weight JavaScript promises.",
   "main": "plite.js",
   "directories": {},
-  "scripts": {},
+  "scripts": {
+    "test": "jasmine-node test/*.spec.js",
+    "min": "uglifyjs plite.js --source-map plite.min.js.map -m -c -o plite.min.js && echo 'Minified size' && uglifyjs plite.js | gzip -9f | wc -c"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/chrisdavies/plite"
@@ -17,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/chrisdavies/plite/issues"
   },
-  "homepage": "https://github.com/chrisdavies/plite"
+  "homepage": "https://github.com/chrisdavies/plite",
+  "devDependencies": {
+    "jasmine-node": "^1.14.5"
+  }
 }
