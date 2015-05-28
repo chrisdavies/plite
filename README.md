@@ -2,23 +2,14 @@
 
 Tiny, fast, light-weight JavaScript promises.
 
-## Stats
+- Less than 700 bytes gzipped and minified
+- Super fast http://jsperf.com/plite/14
+- Standards-compliant
+- Faster than native in many cases
 
-size: roughly 600 bytes gzipped and minified
-
-perf: http://jsperf.com/plite/14
+[![Build Status](https://travis-ci.org/chrisdavies/plite.svg?branch=master)](https://travis-ci.org/chrisdavies/plite)
 
 ## Usage
-
-Include `plite.min.js`
-
-Or install using NPM:
-
-    npm install plite
-
-Or install using Bower:
-
-    bower install plite
 
 Plite should work as a shim for ES6 promises, if you do this:
 
@@ -74,12 +65,17 @@ With the caveat that the iterable argument is treated as an array. So:
       // err is the error of to the first failed promise in the array
     });
 
+## Installation
 
-## Minification
+Include `plite.min.js`
 
-Minified using:
+Or install using NPM:
 
-    uglifyjs plite.js --source-map plite.min.js.map -m -c -o plite.min.js
+    npm install plite
+
+Or install using Bower:
+
+    bower install plite
 
 ## License MIT
 
