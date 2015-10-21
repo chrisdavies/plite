@@ -2,7 +2,7 @@
 
 Tiny, fast, light-weight JavaScript promises.
 
-- Less than 700 bytes gzipped and minified
+- Less than 500 bytes gzipped and minified
 - Super fast http://jsperf.com/plite/14
 - Standards-compliant
 - Faster than native in many cases
