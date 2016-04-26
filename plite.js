@@ -137,6 +137,6 @@ Plite.all = function (promises) {
   });
 };
 
-if (typeof module === 'object' && typeof define !== 'function') {
+if (typeof module !== 'undefined' && module.exports) {
   module.exports = Plite;
 }
