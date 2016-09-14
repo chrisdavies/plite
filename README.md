@@ -4,7 +4,6 @@ Tiny, fast, light-weight JavaScript promises.
 
 - Less than 500 bytes gzipped and minified
 - Super fast http://jsperf.com/plite/14
-- Standards-compliant
 - Faster than native in many cases
 
 [![Build Status](https://travis-ci.org/chrisdavies/plite.svg?branch=master)](https://travis-ci.org/chrisdavies/plite)
