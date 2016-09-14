@@ -48,6 +48,14 @@ function Plite(resolver) {
     };
   }
 
+  function resolve(result) {
+    !resultGetter && processResult(result, setSuccess, setError);
+  }
+
+  function reject(err) {
+    !resultGetter && processResult(err, setError, setError);
+  }
+
   var self = {
     then: function (callback) {
       var resolveCallback = resultGetter || buildChain;
@@ -69,16 +77,16 @@ function Plite(resolver) {
       });
     },
 
-    resolve: function (result) {
-      !resultGetter && processResult(result, setSuccess, setError);
-    },
+    resolve: resolve,
 
-    reject: function (err) {
-      !resultGetter && processResult(err, setError, setError);
-    }
+    reject: reject
   };
 
-  resolver && resolver(self.resolve, self.reject);
+  try {
+    resolver && resolver(resolve, reject);
+  } catch (ex) {
+    reject(ex);
+  }
 
   return self;
 }

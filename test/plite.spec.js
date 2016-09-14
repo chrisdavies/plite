@@ -93,6 +93,20 @@
       });
     });
 
+    it('catches exceptions in the resolver function', function (done) {
+      var p = Plite(function () {
+        throw 'Doh!'
+      });
+      var thenCount = 0;
+
+      p.then(function () { ++thenCount })
+      .catch(function (err) {
+        expect(thenCount).toEqual(0);
+        expect(err).toEqual('Doh!');
+        done();
+      });
+    });
+
     it('does not require that then returns', function () {
       var p = Plite.resolve('mkay'),
           secondRan = false;
