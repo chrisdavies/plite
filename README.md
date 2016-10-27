@@ -12,43 +12,55 @@ Tiny, fast, light-weight JavaScript promises.
 
 Plite should work as a shim for ES6 promises, if you do this:
 
-    !this.Promise && (this.Promise = Plite);
+```javascript
+!this.Promise && (this.Promise = Plite);
+```
 
 Create a resolved promise:
 
-    Plite.resolve(data);
+```javascript
+Plite.resolve(data);
+```
 
 Create a rejected promise:
 
-    Plite.reject(err);
+```javascript
+Plite.reject(err);
+```
 
 Resolve a promise after a bit:
 
-    Plite(function (resolve) {
-      setTimeout(function () {
-        resolve('all done!');
-      }, 100);
-    });
+```javascript
+Plite(function (resolve) {
+  setTimeout(function () {
+    resolve('all done!');
+  }, 100);
+});
+```
 
 Reject a promise after a bit:
 
-    Plite(function (resolve, reject) {
-      setTimeout(function () {
-        reject('Ruh roh!');
-      }, 100);
-    });
+```javascript
+Plite(function (resolve, reject) {
+  setTimeout(function () {
+    reject('Ruh roh!');
+  }, 100);
+});
+```
 
 Promises supports chaining:
 
-    var p = Plite.resolve('Hurrah!');
+```javascript
+var p = Plite.resolve('Hurrah!');
 
-    p.then(function (msg) {
-      return msg + ' on ' + new Date().toString();
-    }).then(function (msg) {
-      alert('GOOD: ' + msg);
-    }).catch(function (err) {
-      alert('ERR: ' + err);
-    });
+p.then(function (msg) {
+  return msg + ' on ' + new Date().toString();
+}).then(function (msg) {
+  alert('GOOD: ' + msg);
+}).catch(function (err) {
+  alert('ERR: ' + err);
+});
+```
 
 ## Race and All
 
@@ -58,11 +70,13 @@ So does [race](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
 
 With the caveat that the iterable argument is treated as an array. So:
 
-    Plite.all([promise1, promise2]).then(function (data) {
-      // data is the array of values that the promises resolved to...
-    }).catch(function (err) {
-      // err is the error of to the first failed promise in the array
-    });
+```javascript
+Plite.all([promise1, promise2]).then(function (data) {
+  // data is the array of values that the promises resolved to...
+}).catch(function (err) {
+  // err is the error of to the first failed promise in the array
+});
+```
 
 ## Installation
 
@@ -70,11 +84,15 @@ Include `plite.min.js`
 
 Or install using NPM:
 
-    npm install plite
+```bash
+npm install plite
+```
 
 Or install using Bower:
 
-    bower install plite
+```bash
+bower install plite
+```
 
 ## License MIT
 
